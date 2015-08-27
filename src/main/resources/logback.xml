@@ -1,0 +1,40 @@
+<configuration>
+    <appender name="FILE"
+              class="ch.qos.logback.core.FileAppender">
+        <file>hystrix_test.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>
+                %d{YY-MM-dd'T'HH:mm:ss.SSS,UTC} %-5level [%thread][%logger{0}] %m%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%-4relative %-5level [%thread][%logger{0}] %m%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+    </appender>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                [%level] %m%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.netflix.hystrix.strategy.properties" level="INFO" />
+
+    <root level="DEBUG">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <logger name="console" additivity="false">
+        <appender-ref ref="console"/>
+    </logger>
+</configuration>

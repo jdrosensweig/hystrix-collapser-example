@@ -27,7 +27,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.netflix.hystrix.strategy.properties" level="INFO" />
+    <!--<logger name="com.netflix.hystrix.strategy.properties" level="INFO" />-->
 
     <root level="DEBUG">
         <appender-ref ref="FILE"/>

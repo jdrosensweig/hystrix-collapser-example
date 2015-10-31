@@ -3,7 +3,6 @@ package com.xyleolabs.test.collapser;
 import com.netflix.hystrix.HystrixCollapser;
 import com.netflix.hystrix.HystrixCollapserKey;
 import com.netflix.hystrix.HystrixCommand;
-import com.sun.org.apache.bcel.internal.ExceptionConstants;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,8 +19,8 @@ public class ExampleCollapserCmd extends
 
     public ExampleCollapserCmd(Integer count) {
         super(Setter.withCollapserKey(
-                HystrixCollapserKey.Factory.asKey(
-                        EXAMPLE_COLLAPSER_KEY)));
+                HystrixCollapserKey.Factory.asKey(EXAMPLE_COLLAPSER_KEY))
+                .andScope(Scope.GLOBAL));
         this.count = count;
     }
 

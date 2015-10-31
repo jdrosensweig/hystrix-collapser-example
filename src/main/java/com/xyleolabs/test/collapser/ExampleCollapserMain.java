@@ -1,10 +1,6 @@
 package com.xyleolabs.test.collapser;
 
-import com.netflix.hystrix.Hystrix;
-import com.netflix.hystrix.HystrixCollapser;
-import com.netflix.hystrix.HystrixThreadPoolKey;
-import com.netflix.hystrix.HystrixThreadPoolMetrics;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.*;
 import com.netflix.config.ConfigurationManager;
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.slf4j.Logger;
@@ -40,29 +36,23 @@ public class ExampleCollapserMain {
         CLOG = LoggerFactory.getLogger("console");
         initializeHystrixSettings();
 
-        HystrixRequestContext context =
-                HystrixRequestContext.initializeContext();
-        try {
-            runLoopTest();
-        } finally {
-            context.shutdown();
-        }
+        runLoopTest();
     }
 
     private static void initializeHystrixSettings() {
         hystrixConfig = ConfigurationManager.getConfigInstance();
-        hystrixConfig.setProperty(CORE_SIZE_CONFIG, "50");
-        hystrixConfig.setProperty(MAX_QUEUE_SIZE_CONFIG, "50");
-        hystrixConfig.setProperty(QUEUE_REJECTION_THRESHOLD_CONFIG, "25");
-        hystrixConfig.setProperty(COLLAPSER_TIMER_DELAY, "30");
+        hystrixConfig.setProperty(CORE_SIZE_CONFIG, "20");
+        hystrixConfig.setProperty(MAX_QUEUE_SIZE_CONFIG, "20");
+        hystrixConfig.setProperty(QUEUE_REJECTION_THRESHOLD_CONFIG, "10");
+        hystrixConfig.setProperty(COLLAPSER_TIMER_DELAY, "50");
     }
 
     private static void runLoopTest() throws InterruptedException {
-        final int commandsToRun = 5000;
+        final int commandsToRun = 50000;
         for (int number = 0; number < commandsToRun; number++) {
             try {
-                HystrixCollapser collapser = new ExampleCollapserCmd(number);
-                Observable observable = collapser.toObservable();
+                ExampleCollapserCmd collapser = new ExampleCollapserCmd(number);
+                Observable<Boolean> observable = collapser.toObservable();
                 observable.subscribe(new Observer<Boolean>() {
                     @Override
                     public void onCompleted() {
@@ -91,7 +81,7 @@ public class ExampleCollapserMain {
 
         while (getTotalWaitingCommands() > 0) {
             CLOG.info("Waiting for Hystrix pool to finish all jobs");
-            Thread.sleep(50);
+            Thread.sleep(500);
         }
 
         CLOG.info("Successful command runs = {}", commandSuccesses.get());
